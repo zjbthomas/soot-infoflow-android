@@ -158,7 +158,7 @@ public class GeneralJavaTests extends JUnitTests {
 	@Test(timeout=300000)
 	public void runTestStringToOutputStream1() throws IOException, XmlPullParserException {
 		InfoflowResults res = analyzeAPKFile("GeneralJava/StringToOutputStream1.apk");
-		Assert.assertEquals(1, res.size());
+		Assert.assertEquals(2, res.size());	// Log + File
 	}
 	
 	@Test(timeout=300000)

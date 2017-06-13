@@ -10,6 +10,7 @@
  ******************************************************************************/
 package soot.jimple.infoflow.android.test.otherAPKs;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.xmlpull.v1.XmlPullParserException;
@@ -60,12 +61,18 @@ public class JUnitTests {
 		System.out.println("Loading Android.jar files from " + androidJars);
 		
 		SetupApplication setupApplication = new SetupApplication(androidJars, fileName);
-		setupApplication.setTaintWrapper(new EasyTaintWrapper("EasyTaintWrapperSource.txt"));
-		setupApplication.calculateSourcesSinksEntrypoints("SourcesAndSinks.txt");
+
+		// Find the taint wrapper file
+		File taintWrapperFile = new File("EasyTaintWrapperSource.txt");
+		if (!taintWrapperFile.exists())
+			taintWrapperFile = new File("../soot-infoflow/EasyTaintWrapperSource.txt");
+		setupApplication.setTaintWrapper(new EasyTaintWrapper(taintWrapperFile));
+		
+		// Configure the analysis
 		setupApplication.getConfig().setEnableImplicitFlows(enableImplicitFlows);
 		setupApplication.getConfig().setEnableStaticFieldTracking(enableStaticFields);
 		setupApplication.getConfig().setFlowSensitiveAliasing(flowSensitiveAliasing);
-		return setupApplication.runInfoflow();
+		return setupApplication.runInfoflow("SourcesAndSinks.txt");
 	}
 	
 }

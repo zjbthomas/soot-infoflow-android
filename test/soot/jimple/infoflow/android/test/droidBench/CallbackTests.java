@@ -17,6 +17,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.xmlpull.v1.XmlPullParserException;
 
+import soot.jimple.infoflow.android.InfoflowAndroidConfiguration;
+import soot.jimple.infoflow.android.source.AndroidSourceSinkManager.LayoutMatchingMode;
 import soot.jimple.infoflow.results.InfoflowResults;
 
 public class CallbackTests extends JUnitTests {
@@ -58,7 +60,15 @@ public class CallbackTests extends JUnitTests {
 
 	@Test(timeout=300000)
 	public void runTestButton5() throws IOException, XmlPullParserException {
-		InfoflowResults res = analyzeAPKFile("Callbacks/Button5.apk");
+		InfoflowResults res = analyzeAPKFile("Callbacks/Button5.apk", null,
+				new AnalysisConfigurationCallback() {
+			
+			@Override
+			public void configureAnalyzer(InfoflowAndroidConfiguration config) {
+				config.setLayoutMatchingMode(LayoutMatchingMode.MatchAll);
+			}
+		});
+		
 		Assert.assertNotNull(res);
 		Assert.assertEquals(1, res.size());
 	}

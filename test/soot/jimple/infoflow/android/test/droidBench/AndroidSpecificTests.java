@@ -24,12 +24,14 @@ public class AndroidSpecificTests extends JUnitTests {
 	@Test(timeout=300000)
 	public void runTestApplicationModeling1() throws IOException, XmlPullParserException {
 		InfoflowResults res = analyzeAPKFile("AndroidSpecific/ApplicationModeling1.apk");
+		Assert.assertNotNull(res);
 		Assert.assertEquals(1, res.size());
 	}
 	
 	@Test(timeout=300000)
 	public void runTestDirectLeak1() throws IOException, XmlPullParserException {
 		InfoflowResults res = analyzeAPKFile("AndroidSpecific/DirectLeak1.apk");
+		Assert.assertNotNull(res);
 		Assert.assertEquals(1, res.size());
 	}
 
@@ -43,6 +45,7 @@ public class AndroidSpecificTests extends JUnitTests {
 	@Test(timeout=300000)
 	public void runTestLibrary2() throws IOException, XmlPullParserException {
 		InfoflowResults res = analyzeAPKFile("AndroidSpecific/Library2.apk");
+		Assert.assertNotNull(res);
 		Assert.assertEquals(1, res.size());
 	}
 
@@ -56,24 +59,28 @@ public class AndroidSpecificTests extends JUnitTests {
 	@Test(timeout=300000)
 	public void runTestObfuscation1() throws IOException, XmlPullParserException {
 		InfoflowResults res = analyzeAPKFile("AndroidSpecific/Obfuscation1.apk");
+		Assert.assertNotNull(res);
 		Assert.assertEquals(1, res.size());
 	}
 
 	@Test(timeout=300000)
 	public void runTestParcel1() throws IOException, XmlPullParserException {
 		InfoflowResults res = analyzeAPKFile("AndroidSpecific/Parcel1.apk");
+		Assert.assertNotNull(res);
 		Assert.assertEquals(1, res.size());
 	}
 
 	@Test(timeout=300000)
 	public void runTestPrivateDataLeak1() throws IOException, XmlPullParserException {
 		InfoflowResults res = analyzeAPKFile("AndroidSpecific/PrivateDataLeak1.apk");
+		Assert.assertNotNull(res);
 		Assert.assertEquals(1, res.size());
 	}
 
 	@Test(timeout=300000)
 	public void runTestPrivateDataLeak2() throws IOException, XmlPullParserException {
 		InfoflowResults res = analyzeAPKFile("AndroidSpecific/PrivateDataLeak2.apk");
+		Assert.assertNotNull(res);
 		Assert.assertEquals(1, res.size());
 	}
 
@@ -81,24 +88,28 @@ public class AndroidSpecificTests extends JUnitTests {
 	@Ignore		// not supported, would require taint tracking via files
 	public void runTestPrivateDataLeak3() throws IOException, XmlPullParserException {
 		InfoflowResults res = analyzeAPKFile("AndroidSpecific/PrivateDataLeak3.apk");
+		Assert.assertNotNull(res);
 		Assert.assertEquals(2, res.size());
 	}
 	
 	@Test(timeout=300000)
 	public void runPublicAPIField1() throws IOException, XmlPullParserException {
 		InfoflowResults res = analyzeAPKFile("AndroidSpecific/PublicAPIField1.apk");
+		Assert.assertNotNull(res);
 		Assert.assertEquals(1, res.size());
 	}
 	
 	@Test(timeout=300000)
 	public void runPublicAPIField2() throws IOException, XmlPullParserException {
 		InfoflowResults res = analyzeAPKFile("AndroidSpecific/PublicAPIField2.apk");
+		Assert.assertNotNull(res);
 		Assert.assertEquals(1, res.size());
 	}
 	
 	@Test(timeout=300000)
 	public void runView1() throws IOException, XmlPullParserException {
 		InfoflowResults res = analyzeAPKFile("AndroidSpecific/View1.apk");
+		Assert.assertNotNull(res);
 		Assert.assertEquals(1, res.size());
 	}
 	

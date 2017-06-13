@@ -1,7 +1,6 @@
 package soot.jimple.infoflow.android.callbacks;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Set;
 
 import soot.Scene;
@@ -23,24 +22,25 @@ import soot.jimple.infoflow.android.InfoflowAndroidConfiguration;
 public class FastCallbackAnalyzer extends AbstractCallbackAnalyzer {
 
 	public FastCallbackAnalyzer(InfoflowAndroidConfiguration config,
-			Set<String> entryPointClasses) throws IOException {
+			Set<SootClass> entryPointClasses) throws IOException {
 		super(config, entryPointClasses);
 	}
 	
 	public FastCallbackAnalyzer(InfoflowAndroidConfiguration config,
-			Set<String> entryPointClasses,
+			Set<SootClass> entryPointClasses,
 			String callbackFile) throws IOException {
 		super(config, entryPointClasses, callbackFile);
 	}
 
 	public FastCallbackAnalyzer(InfoflowAndroidConfiguration config,
-			Set<String> entryPointClasses,
+			Set<SootClass> entryPointClasses,
 			Set<String> androidCallbacks) throws IOException {
 		super(config, entryPointClasses, androidCallbacks);
 	}
 
 	@Override
 	public void collectCallbackMethods() {
+		super.collectCallbackMethods();
 		logger.info("Collecting callbacks in FAST mode...");
 		
 		// Find the mappings between classes and layouts
@@ -85,12 +85,7 @@ public class FastCallbackAnalyzer extends AbstractCallbackAnalyzer {
 									for (Value val : inv.getArgs())
 										if (val instanceof IntConstant) {
 											IntConstant constVal = (IntConstant) val;
-											Set<Integer> layoutIDs = this.layoutClasses.get(sm.getDeclaringClass().getName());
-											if (layoutIDs == null) {
-												layoutIDs = new HashSet<Integer>();
-												this.layoutClasses.put(sm.getDeclaringClass().getName(), layoutIDs);
-											}
-											layoutIDs.add(constVal.value);
+											this.layoutClasses.put(sm.getDeclaringClass(), constVal.value);
 										}
 								}
 							}
@@ -99,6 +94,11 @@ public class FastCallbackAnalyzer extends AbstractCallbackAnalyzer {
 				}
 			}
 		}
+	}
+
+	@Override
+	public void excludeEntryPoint(SootClass entryPoint) {
+		// not supported
 	}
 
 }

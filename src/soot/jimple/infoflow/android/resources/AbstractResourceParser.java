@@ -11,6 +11,7 @@
 package soot.jimple.infoflow.android.resources;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Set;
 import java.util.zip.ZipEntry;
@@ -46,7 +47,15 @@ public abstract class AbstractResourceParser {
 					ZipEntry entry = (ZipEntry) entries.nextElement();
 					String entryName = entry.getName();
 					
-					handler.handleResourceFile(entryName, fileNameFilter, archive.getInputStream(entry));
+					InputStream is = null;
+					try {
+						is = archive.getInputStream(entry);
+						handler.handleResourceFile(entryName, fileNameFilter, is);
+					}
+					finally {
+						if (is != null)
+							is.close();
+					}
 				}
 			}
 			finally {
