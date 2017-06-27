@@ -51,7 +51,6 @@ import soot.util.queue.QueueReader;
  */
 public class DefaultCallbackAnalyzer extends AbstractCallbackAnalyzer implements IMemoryBoundedSolver {
 	
-	private Set<SootClass> excludedEntryPoints = new HashSet<>();
 	private MultiMap<SootClass, SootMethod> callbackWorklist = null;
 	private AndroidEntryPointUtils entryPointUtils = new AndroidEntryPointUtils();
 	private Set<IMemoryBoundedSolverStatusNotification> notificationListeners = new HashSet<>();
@@ -436,7 +435,7 @@ public class DefaultCallbackAnalyzer extends AbstractCallbackAnalyzer implements
 
 	@Override
 	public void excludeEntryPoint(SootClass entryPoint) {
-		this.excludedEntryPoints.add(entryPoint);
+		super.excludeEntryPoint(entryPoint);
 		this.callbackWorklist.remove(entryPoint);
 		this.callbackMethods.remove(entryPoint);
 	}

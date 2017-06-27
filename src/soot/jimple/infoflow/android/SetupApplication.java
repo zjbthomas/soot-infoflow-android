@@ -710,7 +710,7 @@ public class SetupApplication {
 	 * @param lfp The layout file parser
 	 * @param jimpleClass The analysis class that gives us a mapping between
 	 * layout IDs and components
-	 * @return True if at lwast one new callback method has been added, otherwise
+	 * @return True if at least one new callback method has been added, otherwise
 	 * false
 	 */
 	private boolean collectXmlBasedCallbackMethods(LayoutFileParser lfp,
@@ -718,6 +718,9 @@ public class SetupApplication {
 		// Collect the XML-based callback methods
 		boolean hasNewCallback = false;
 		for (final SootClass callbackClass : jimpleClass.getLayoutClasses().keySet()) {
+			if (jimpleClass.isExcludedEntryPoint(callbackClass))
+				continue;
+			
 			Set<Integer> classIds = jimpleClass.getLayoutClasses().get(callbackClass);
 			for (Integer classId : classIds) {
 				AbstractResource resource = this.resources.findResource(classId);

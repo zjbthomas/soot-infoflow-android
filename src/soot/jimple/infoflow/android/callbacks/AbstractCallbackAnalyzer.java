@@ -74,6 +74,7 @@ public abstract class AbstractCallbackAnalyzer {
 	protected final Map<SootClass, Integer> fragmentIDs = new HashMap<>();
 	
 	protected final Set<ICallbackFilter> callbackFilters = new HashSet<ICallbackFilter>();
+	protected final Set<SootClass> excludedEntryPoints = new HashSet<>();
 	
 	public AbstractCallbackAnalyzer(InfoflowAndroidConfiguration config,
 			Set<SootClass> entryPointClasses) throws IOException {
@@ -488,9 +489,13 @@ public abstract class AbstractCallbackAnalyzer {
 		// Do not analyze system classes
 		if (SystemClassHandler.isClassInSystemPackage(baseClass.getName()))
 			return;
+		if (SystemClassHandler.isClassInSystemPackage(sootClass.getName()))
+			return;
 		
 		// Check the filters
 		if (!filterAccepts(lifecycleElement, baseClass))
+			return;
+		if (!filterAccepts(lifecycleElement, sootClass))
 			return;
 		
 		// If we are a class, one of our superclasses might implement an Android
@@ -601,6 +606,17 @@ public abstract class AbstractCallbackAnalyzer {
 	 * will be collected for the given entry point
 	 * @param entryPoint The entry point to exclude
 	 */
-	public abstract void excludeEntryPoint(SootClass entryPoint);
+	public void excludeEntryPoint(SootClass entryPoint) {
+		this.excludedEntryPoints.add(entryPoint);
+	}
+	
+	/**
+	 * Checks whether the given class is an excluded entry point
+	 * @param entryPoint The entry point to check
+	 * @return True if the given class is an excluded entry point, otherwise false
+	 */
+	public boolean isExcludedEntryPoint(SootClass entryPoint) {
+		return this.excludedEntryPoints.contains(entryPoint);
+	}
 	
 }

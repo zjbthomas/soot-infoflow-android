@@ -28,6 +28,7 @@ import soot.jimple.infoflow.android.axml.AXmlNode;
 import soot.jimple.infoflow.android.axml.parsers.AXML20Parser;
 import soot.jimple.infoflow.android.resources.ARSCFileParser.AbstractResource;
 import soot.jimple.infoflow.android.resources.ARSCFileParser.StringResource;
+import soot.jimple.infoflow.util.SystemClassHandler;
 import soot.util.HashMultiMap;
 import soot.util.MultiMap;
 
@@ -412,8 +413,9 @@ public class LayoutFileParser extends AbstractResourceParser {
 		
 		// Register the new user control
 		if (!loadOnlySensitiveControls || isSensitive)
-			this.userControls.put(layoutFile, new LayoutControl(id, layoutClass,
-					isSensitive, additionalAttributes));
+			if (!SystemClassHandler.isClassInSystemPackage(layoutClass.getName()))
+				this.userControls.put(layoutFile, new LayoutControl(id, layoutClass,
+						isSensitive, additionalAttributes));
 	}
 
 	/**

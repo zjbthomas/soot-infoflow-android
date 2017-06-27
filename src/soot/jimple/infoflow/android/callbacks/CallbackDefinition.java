@@ -85,4 +85,9 @@ public class CallbackDefinition {
 		return true;
 	}
 	
+	@Override
+	public String toString() {
+		return targetMethod.toString();
+	}
+	
 }
