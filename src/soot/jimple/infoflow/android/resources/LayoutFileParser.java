@@ -413,7 +413,6 @@ public class LayoutFileParser extends AbstractResourceParser {
 		
 		// Register the new user control
 		if (!loadOnlySensitiveControls || isSensitive)
-			if (!SystemClassHandler.isClassInSystemPackage(layoutClass.getName()))
 				this.userControls.put(layoutFile, new LayoutControl(id, layoutClass,
 						isSensitive, additionalAttributes));
 	}

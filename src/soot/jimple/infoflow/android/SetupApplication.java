@@ -764,9 +764,11 @@ public class SetupApplication {
 					// For user-defined views, we need to emulate their
 					// callbacks
 					Set<LayoutControl> controls = lfp.getUserControls().get(layoutFileName);
-					if (controls != null)
+					if (controls != null) {
 						for (LayoutControl lc : controls)
-							registerCallbackMethodsForView(callbackClass, lc);
+							if (!SystemClassHandler.isClassInSystemPackage(lc.getViewClass().getName()))
+								registerCallbackMethodsForView(callbackClass, lc);
+					}
 				} else
 					logger.error("Unexpected resource type for layout class");
 			}
