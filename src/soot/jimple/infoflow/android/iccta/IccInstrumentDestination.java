@@ -212,7 +212,7 @@ public class IccInstrumentDestination
     public SootField generateIntentFieldForIpc(SootClass compSootClass)
     {
     	int m = Modifier.PUBLIC | Modifier.STATIC;
-        SootField sf = new SootField(FIELD_INTENT_FOR_IPC, INTENT_TYPE, m);
+        SootField sf = Scene.v().makeSootField(FIELD_INTENT_FOR_IPC, INTENT_TYPE, m);
         compSootClass.addField(sf);
         
         return sf;
@@ -230,7 +230,7 @@ public class IccInstrumentDestination
     public SootField generateIntentFieldForActivityResult(SootClass compSootClass)
     {
     	int m = Modifier.PUBLIC | Modifier.STATIC;
-        SootField sf = new SootField(FIELD_INTENT_FOR_ACTIVITY_RESULT, INTENT_TYPE, m);
+        SootField sf = Scene.v().makeSootField(FIELD_INTENT_FOR_ACTIVITY_RESULT, INTENT_TYPE, m);
         compSootClass.addField(sf);
         
         return sf;
@@ -239,7 +239,7 @@ public class IccInstrumentDestination
     public SootField generateFieldForIBinder(SootClass compSootClass, Type binderType)
     {
     	int m = Modifier.PUBLIC | Modifier.STATIC;
-        SootField sf = new SootField(FIELD_IBINDER_FOR_IPC, binderType, m);
+        SootField sf = Scene.v().makeSootField(FIELD_IBINDER_FOR_IPC, binderType, m);
         compSootClass.addField(sf);
         
         return sf;
@@ -832,7 +832,7 @@ public class IccInstrumentDestination
 		}
 		
 		int m = Modifier.PUBLIC | Modifier.STATIC;
-		SootField sf = new SootField("message_for_ipc_static", RefType.v("android.os.Message"), m);
+		SootField sf = Scene.v().makeSootField("message_for_ipc_static", RefType.v("android.os.Message"), m);
 		fromC.addField(sf);
 		
 		for (SootMethod sm : fromC.getMethods())
