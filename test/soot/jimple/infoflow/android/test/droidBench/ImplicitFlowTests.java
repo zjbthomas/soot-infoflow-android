@@ -53,4 +53,11 @@ public class ImplicitFlowTests extends JUnitTests {
 		Assert.assertNotNull(res);
 		Assert.assertEquals(1, res.size());
 	}
+	
+	@Test(timeout=300000)
+	public void runTestImplicitFlow6() throws IOException, XmlPullParserException {
+		InfoflowResults res = analyzeAPKFile("ImplicitFlows/ImplicitFlow6.apk", true);
+		Assert.assertTrue(res == null || res.isEmpty());
+	}
+
 }

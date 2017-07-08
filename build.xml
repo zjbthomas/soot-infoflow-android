@@ -31,6 +31,7 @@
 	<target name="jar" depends="compile">
 		<mkdir dir="build/jar" />
 		<jar destfile="${infoflow-android.jar}" basedir="build/classes">
+            <zipfileset src="lib/protobuf-java-2.5.0.jar"/>
 			<manifest>
 				<attribute name="Main-Class" value="soot.jimple.infoflow.android.TestApps.Test" />
 				<!-- <attribute name="Main-Class" value="?"/>-->

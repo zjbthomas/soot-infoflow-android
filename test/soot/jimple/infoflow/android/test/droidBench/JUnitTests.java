@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import org.xmlpull.v1.XmlPullParserException;
 
+import soot.jimple.infoflow.android.InfoflowAndroidConfiguration;
 import soot.jimple.infoflow.android.SetupApplication;
 import soot.jimple.infoflow.results.InfoflowResults;
 import soot.jimple.infoflow.taintWrappers.EasyTaintWrapper;
@@ -38,6 +39,21 @@ public class JUnitTests {
 	/**
 	 * Analyzes the given APK file for data flows
 	 * @param fileName The full path and file name of the APK file to analyze
+	 * @param iccModel The full path and file name of the ICC model to use
+	 * @return The data leaks found in the given APK file
+	 * @throws IOException Thrown if the given APK file or any other required
+	 * file could not be found
+	 * @throws XmlPullParserException Thrown if the Android manifest file could
+	 * not be read.
+	 */
+	public InfoflowResults analyzeAPKFile(String fileName, String iccModel)
+			throws IOException, XmlPullParserException {
+		return analyzeAPKFile(fileName, iccModel, null);
+	}
+
+	/**
+	 * Analyzes the given APK file for data flows
+	 * @param fileName The full path and file name of the APK file to analyze
 	 * @param enableImplicitFlows True if implicit flows shall be tracked,
 	 * otherwise false
 	 * @return The data leaks found in the given APK file
@@ -46,8 +62,50 @@ public class JUnitTests {
 	 * @throws XmlPullParserException Thrown if the Android manifest file could
 	 * not be read.
 	 */
-	public InfoflowResults analyzeAPKFile(String fileName, boolean enableImplicitFlows)
-			throws IOException, XmlPullParserException {
+	public InfoflowResults analyzeAPKFile(String fileName,
+			final boolean enableImplicitFlows) throws IOException, XmlPullParserException {
+		return analyzeAPKFile(fileName, null, new AnalysisConfigurationCallback() {
+			
+			@Override
+			public void configureAnalyzer(InfoflowAndroidConfiguration config) {
+				config.setEnableImplicitFlows(enableImplicitFlows);
+			}
+			
+		});
+	}
+	
+	/**
+	 * Interface that allows test cases to configure the analyzer for DroidBench
+	 * 
+	 * @author Steven Arzt
+	 *
+	 */
+	public interface AnalysisConfigurationCallback {
+		
+		/**
+		 * Method that is called to give the test case the chance to change the
+		 * analyzer configuration
+		 * @param config The configuration object used by the analyzer
+		 */
+		public void configureAnalyzer(InfoflowAndroidConfiguration config);
+		
+	}
+	
+	/**
+	 * Analyzes the given APK file for data flows
+	 * @param fileName The full path and file name of the APK file to analyze
+	 * @param iccModel The full path and file name of the ICC model to use
+	 * @param configCallback A callback that is invoked to allow the test case
+	 * to change the analyzer configuration when necessary. Pass null to ignore
+	 * the callback.
+	 * @return The data leaks found in the given APK file
+	 * @throws IOException Thrown if the given APK file or any other required
+	 * file could not be found
+	 * @throws XmlPullParserException Thrown if the Android manifest file could
+	 * not be read.
+	 */
+	public InfoflowResults analyzeAPKFile(String fileName, String iccModel,
+			AnalysisConfigurationCallback configCallback) throws IOException, XmlPullParserException {
 		String androidJars = System.getenv("ANDROID_JARS");
 		if (androidJars == null)
 			androidJars = System.getProperty("ANDROID_JARS");
@@ -64,11 +122,24 @@ public class JUnitTests {
 		
 		SetupApplication setupApplication = new SetupApplication(androidJars,
 				droidBenchDir + File.separator + fileName);
-		setupApplication.setTaintWrapper(new EasyTaintWrapper("EasyTaintWrapperSource.txt"));
-		setupApplication.calculateSourcesSinksEntrypoints("SourcesAndSinks.txt");
-		setupApplication.getConfig().setEnableImplicitFlows(enableImplicitFlows);
+		
+		// Find the taint wrapper file
+		File taintWrapperFile = new File("EasyTaintWrapperSource.txt");
+		if (!taintWrapperFile.exists())
+			taintWrapperFile = new File("../soot-infoflow/EasyTaintWrapperSource.txt");
+		
+		// Make sure to apply the settings before we calculate entry points
+		if (configCallback != null)
+			configCallback.configureAnalyzer(setupApplication.getConfig());
+		
+		setupApplication.setTaintWrapper(new EasyTaintWrapper(taintWrapperFile));
 		setupApplication.getConfig().setEnableArraySizeTainting(true);
-		return setupApplication.runInfoflow();
+		
+		if (iccModel != null && iccModel.length() > 0) {
+			setupApplication.getConfig().setIccModel(iccModel);
+		}
+		
+		return setupApplication.runInfoflow("SourcesAndSinks.txt");
 	}
 
 }

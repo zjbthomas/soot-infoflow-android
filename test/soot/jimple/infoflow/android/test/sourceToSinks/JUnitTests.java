@@ -41,7 +41,8 @@ public class JUnitTests {
 	 * @throws XmlPullParserException Thrown if the Android manifest file could
 	 * not be read.
 	 */
-	public InfoflowResults analyzeAPKFile(String apkFileName, String xmlFileName, boolean enableImplicitFlows, boolean enableStaticFields, boolean flowSensitiveAliasing)
+	public InfoflowResults analyzeAPKFile(String apkFileName, String xmlFileName,
+			boolean enableImplicitFlows, boolean enableStaticFields, boolean flowSensitiveAliasing)
 					throws IOException, XmlPullParserException {
 		String androidJars = System.getenv("ANDROID_JARS");
 		if (androidJars == null)
@@ -52,10 +53,9 @@ public class JUnitTests {
 		
 		SetupApplication setupApplication = new SetupApplication(androidJars, apkFileName);
 		setupApplication.setTaintWrapper(new EasyTaintWrapper("EasyTaintWrapperSource.txt"));
-		setupApplication.calculateSourcesSinksEntrypoints(xmlFileName);
 		setupApplication.getConfig().setEnableImplicitFlows(enableImplicitFlows);
 		setupApplication.getConfig().setEnableStaticFieldTracking(enableStaticFields);
 		setupApplication.getConfig().setFlowSensitiveAliasing(flowSensitiveAliasing);
-		return setupApplication.runInfoflow();
+		return setupApplication.runInfoflow(xmlFileName);
 	}
 }

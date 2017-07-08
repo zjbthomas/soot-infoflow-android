@@ -27,30 +27,18 @@ public class InsecureBankTests {
 	private final static String sharedPrefs_putString =
 			"<android.content.SharedPreferences$Editor: android.content.SharedPreferences$Editor putString(java.lang.String,java.lang.String)>";
 
-	private final static String activity_startActivity =
-			"<android.app.Activity: void startActivity(android.content.Intent)>";
 	private final static String activity_findViewById =
 			"<android.app.Activity: android.view.View findViewById(int)>";
-//	private final static String activity_getIntent =
-//			"<android.app.Activity: android.content.Intent getIntent()>";
-
-	private final static String url_init =
-			"<java.net.URL: void <init>(java.lang.String)>";
-
-	private final static String bundle_getString =
-			"<android.os.Bundle: java.lang.String getString(java.lang.String)>";
-
 	private final static String log_e =
 			"<android.util.Log: int e(java.lang.String,java.lang.String)>";
-//	private final static String log_d =
-//			"<android.util.Log: int d(java.lang.String,java.lang.String)>";
 	private final static String log_i =
 			"<android.util.Log: int i(java.lang.String,java.lang.String)>";
 	
 	private final static String urlConnection_openConnection =
 			"<java.net.URL: java.net.URLConnection openConnection()>";
-//	private final static String cursor_getString =
-//			"<android.database.Cursor: java.lang.String getString(int)>";
+
+	private final static String bufferedwriter_write =
+			"<java.io.BufferedWriter: void write(java.lang.String)>";
 	
 	/**
 	 * Analyzes the given APK file for data flows
@@ -70,13 +58,17 @@ public class InsecureBankTests {
 			throw new RuntimeException("Android JAR dir not set");
 		System.out.println("Loading Android.jar files from " + androidJars);
 		
+		// Find the taint wrapper file
+		File taintWrapperFile = new File("EasyTaintWrapperSource.txt");
+		if (!taintWrapperFile.exists())
+			taintWrapperFile = new File("../soot-infoflow/EasyTaintWrapperSource.txt");
+		
 		SetupApplication setupApplication = new SetupApplication(androidJars,
 				"insecureBank" + File.separator + "InsecureBank.apk");
-		setupApplication.setTaintWrapper(new EasyTaintWrapper("EasyTaintWrapperSource.txt"));
+		setupApplication.setTaintWrapper(new EasyTaintWrapper(taintWrapperFile));
 		setupApplication.getConfig().setEnableImplicitFlows(enableImplicitFlows);
 		setupApplication.getConfig().setLayoutMatchingMode(LayoutMatchingMode.MatchAll);
-		setupApplication.calculateSourcesSinksEntrypoints("SourcesAndSinks.txt");
-		return setupApplication.runInfoflow();
+		return setupApplication.runInfoflow("SourcesAndSinks.txt");
 	}
 
 	@Test
@@ -85,11 +77,8 @@ public class InsecureBankTests {
 		// 7 leaks + 1x inter-component communication (server ip going through an intent)
 		Assert.assertEquals(8, res.size());
 		
-//		Assert.assertTrue(res.isPathBetweenMethods(activity_startActivity, activity_findViewById));
-
-//		Assert.assertTrue(res.isPathBetweenMethods(log_e, activity_getIntent));
+		Assert.assertTrue(res.isPathBetweenMethods(log_i, activity_findViewById));
 		Assert.assertTrue(res.isPathBetweenMethods(log_e, activity_findViewById));
-		Assert.assertTrue(res.isPathBetweenMethods(log_e, bundle_getString));
 		Assert.assertTrue(res.isPathBetweenMethods(log_e, urlConnection_openConnection));
 
 		// We do not consider the length of a list as sensitive only because it
@@ -100,10 +89,8 @@ public class InsecureBankTests {
 		Assert.assertTrue(res.isPathBetweenMethods(sharedPrefs_putString, activity_findViewById));
 
 		Assert.assertTrue(res.isPathBetweenMethods(log_i, activity_findViewById));
-		
-//		Assert.assertTrue(res.isPathBetweenMethods(url_init, activity_getIntent));
-//		Assert.assertTrue(res.isPathBetweenMethods(url_init, activity_findViewById));
-		Assert.assertTrue(res.isPathBetweenMethods(url_init, bundle_getString));
+
+		Assert.assertTrue(res.isPathBetweenMethods(bufferedwriter_write, activity_findViewById));
 	}
 	
 }

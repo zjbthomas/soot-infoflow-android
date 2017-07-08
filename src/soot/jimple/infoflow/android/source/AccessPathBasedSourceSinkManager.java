@@ -1,7 +1,5 @@
 package soot.jimple.infoflow.android.source;
 
-import heros.InterproceduralCFG;
-
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -10,16 +8,14 @@ import soot.PrimType;
 import soot.RefType;
 import soot.SootClass;
 import soot.SootField;
-import soot.SootMethod;
-import soot.Unit;
 import soot.Value;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.InstanceInvokeExpr;
 import soot.jimple.Stmt;
+import soot.jimple.infoflow.InfoflowManager;
+import soot.jimple.infoflow.android.callbacks.CallbackDefinition;
 import soot.jimple.infoflow.android.resources.LayoutControl;
 import soot.jimple.infoflow.data.AccessPath;
-import soot.jimple.infoflow.data.AccessPathFactory;
-import soot.jimple.infoflow.data.SootMethodAndClass;
 import soot.jimple.infoflow.source.SourceInfo;
 import soot.jimple.infoflow.source.data.AccessPathTuple;
 import soot.jimple.infoflow.source.data.SourceSinkDefinition;
@@ -70,34 +66,32 @@ public class AccessPathBasedSourceSinkManager extends AndroidSourceSinkManager {
 	 */
 	public AccessPathBasedSourceSinkManager(Set<SourceSinkDefinition> sources,
 			Set<SourceSinkDefinition> sinks,
-			Set<SootMethodAndClass> callbackMethods,
+			Set<CallbackDefinition> callbackMethods,
 			LayoutMatchingMode layoutMatching,
 			Map<Integer, LayoutControl> layoutControls) {
 		super(sources, sinks, callbackMethods, layoutMatching, layoutControls);
 	}
 	
 	@Override
-	public SourceInfo getSourceInfo(Stmt sCallSite, InterproceduralCFG<Unit, SootMethod> cfg) {
+	public SourceInfo getSourceInfo(Stmt sCallSite, InfoflowManager manager) {
 		// Callbacks and UI controls are already properly handled by our parent
 		// implementation
-		SourceType type = getSourceType(sCallSite, cfg);
+		SourceType type = getSourceType(sCallSite, manager.getICFG());
 		if (type == SourceType.NoSource)
 			return null;
 		if (type == SourceType.Callback || type == SourceType.UISource)
-			return super.getSourceInfo(sCallSite, type);
+			return super.getSourceInfo(sCallSite, type, manager);
 		
 		// This is a method-based source, so we need to obtain the correct
 		// access path
-		final String signature = methodToSignature.getUnchecked(
-				sCallSite.getInvokeExpr().getMethod());
-		SourceSinkDefinition def = sourceMethods.get(signature);
+		SourceSinkDefinition def = getSourceDefinition(sCallSite.getInvokeExpr().getMethod());
 				
 		// If we don't have any more precise source information, we take the
 		// default behavior of our parent implementation. We do the same if we
 		// tried using access paths and failed, but this is a shortcut in case
 		// we know that we don't have any access paths anyway.
 		if (null == def || def.isEmpty())
-			return super.getSourceInfo(sCallSite, cfg);
+			return super.getSourceInfo(sCallSite, manager);
 		
 		// We have real access path definitions, so we can construct precise
 		// source information objects
@@ -110,7 +104,7 @@ public class AccessPathBasedSourceSinkManager extends AndroidSourceSinkManager {
 			Value baseVal = ((InstanceInvokeExpr) sCallSite.getInvokeExpr()).getBase();
 			for (AccessPathTuple apt : def.getBaseObjects())
 				if (apt.isSource())
-					aps.add(getAccessPathFromDef(baseVal, apt));
+					aps.add(getAccessPathFromDef(baseVal, apt, manager));
 		}
 		
 		// Check whether we need to taint the return object
@@ -118,7 +112,7 @@ public class AccessPathBasedSourceSinkManager extends AndroidSourceSinkManager {
 			Value returnVal = ((DefinitionStmt) sCallSite).getLeftOp();
 			for (AccessPathTuple apt : def.getReturnValues())
 				if (apt.isSource())
-					aps.add(getAccessPathFromDef(returnVal, apt));
+					aps.add(getAccessPathFromDef(returnVal, apt, manager));
 		}
 		
 		// Check whether we need to taint parameters
@@ -129,12 +123,13 @@ public class AccessPathBasedSourceSinkManager extends AndroidSourceSinkManager {
 				if (def.getParameters().length > i)
 					for (AccessPathTuple apt : def.getParameters()[i])
 						if (apt.isSource())
-							aps.add(getAccessPathFromDef(sCallSite.getInvokeExpr().getArg(i), apt));
+							aps.add(getAccessPathFromDef(sCallSite.getInvokeExpr().getArg(i),
+									apt, manager));
 		
 		// If we don't have any more precise source information, we take the
 		// default behavior of our parent implementation
 		if (aps.isEmpty())
-			return super.getSourceInfo(sCallSite, cfg);
+			return super.getSourceInfo(sCallSite, manager);
 		
 		return new SourceInfo(aps);
 	}
@@ -143,42 +138,29 @@ public class AccessPathBasedSourceSinkManager extends AndroidSourceSinkManager {
 	 * Creates an access path from an access path definition object
 	 * @param baseVal The base for the new access path
 	 * @param apt The definition from which to create the new access path
+	 * @param manager The manager to be used for creating new access paths
 	 * @return The newly created access path
 	 */
-	private AccessPath getAccessPathFromDef(Value baseVal, AccessPathTuple apt) {
+	private AccessPath getAccessPathFromDef(Value baseVal, AccessPathTuple apt,
+			InfoflowManager manager) {
 		if (baseVal.getType() instanceof PrimType
 				|| apt.getFields() == null
 				|| apt.getFields().length == 0)
-			return AccessPathFactory.v().createAccessPath(baseVal, true);
+			return manager.getAccessPathFactory().createAccessPath(baseVal, true);
 		
 		SootClass baseClass = ((RefType) baseVal.getType()).getSootClass();
 		SootField[] fields = new SootField[apt.getFields().length];
 		for (int i = 0; i < fields.length; i++)
 			fields[i] = baseClass.getFieldByName(apt.getFields()[i]);
 		
-		return AccessPathFactory.v().createAccessPath(baseVal, fields, true);
+		return manager.getAccessPathFactory().createAccessPath(baseVal, fields, true);
 	}
 	
 	@Override
-	public boolean isSink(Stmt sCallSite, InterproceduralCFG<Unit, SootMethod> cfg,
-			AccessPath sourceAccessPath) {
-		if (!sCallSite.containsInvokeExpr())
+	public boolean isSink(Stmt sCallSite, InfoflowManager manager, AccessPath sourceAccessPath) {
+		SourceSinkDefinition def = getSinkDefinition(sCallSite, manager, sourceAccessPath);
+		if (def == null)
 			return false;
-				
-		// Get the sink definition
-		final String methodSignature = methodToSignature.getUnchecked(
-				sCallSite.getInvokeExpr().getMethod());
-		SourceSinkDefinition def = sinkMethods.get(methodSignature);
-		if (def == null) {
-			// If we don't have a sink definition for the direct callee, we
-			// check the CFG.
-			for (SootMethod sm : cfg.getCalleesOfCallAt(sCallSite)) {
-				String signature = methodToSignature.getUnchecked(sm);
-				if (this.sinkMethods.containsKey(signature))
-					return true;
-			}
-			return false;
-		}
 		
 		// If we have no precise information, we conservatively assume that
 		// everything is tainted without looking at the access path. Only
