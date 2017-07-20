@@ -1125,7 +1125,6 @@ public class SetupApplication {
 		return runInfoflow(parser);
 	}
 	
-	private static final SootClass DUMMY_ENTRYPOINT = new SootClass("dummy");
 	
 	/**
 	 * Runs the data flow analysis.
@@ -1173,7 +1172,12 @@ public class SetupApplication {
 			entrypointWorklist = new ArrayList<SootClass>(entrypoints);
 		else {
 			entrypointWorklist = new ArrayList<>();
-			entrypointWorklist.add(DUMMY_ENTRYPOINT);
+			SootClass dummyEntrypoint;
+			if (Scene.v().containsClass("dummy"))
+				dummyEntrypoint = Scene.v().getSootClass("dummy");
+			else
+				dummyEntrypoint = new SootClass("dummy");
+			entrypointWorklist.add(dummyEntrypoint);
 		}
 
 		// For every entry point (or the dummy entry point which stands for all
