@@ -347,13 +347,9 @@ public class IccInstrumentDestination
         int modifiers = Modifier.PUBLIC;
         SootMethod newGetIntent = null; 
         
-        try
-        {
-        	//For some rare cases, the component may already have a getIntent method.
-        	newGetIntent = compSootClass.getMethod(name, parameters);
-        }
-        catch (Exception ex)
-        {
+        //For some rare cases, the component may already have a getIntent method.
+        newGetIntent = compSootClass.getMethodUnsafe(name, parameters, returnType);
+        if (newGetIntent == null) {
         	newGetIntent = new SootMethod(name, parameters, returnType, modifiers);
         	compSootClass.addMethod(newGetIntent);
         }
