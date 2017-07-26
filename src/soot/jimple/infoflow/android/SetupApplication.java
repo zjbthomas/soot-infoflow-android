@@ -1125,7 +1125,6 @@ public class SetupApplication {
 		return runInfoflow(parser);
 	}
 	
-	private static final SootClass DUMMY_ENTRYPOINT = new SootClass("dummy");
 	
 	/**
 	 * Runs the data flow analysis.
@@ -1173,7 +1172,12 @@ public class SetupApplication {
 			entrypointWorklist = new ArrayList<SootClass>(entrypoints);
 		else {
 			entrypointWorklist = new ArrayList<>();
-			entrypointWorklist.add(DUMMY_ENTRYPOINT);
+			SootClass dummyEntrypoint;
+			if (Scene.v().containsClass("dummy"))
+				dummyEntrypoint = Scene.v().getSootClass("dummy");
+			else
+				dummyEntrypoint = new SootClass("dummy");
+			entrypointWorklist.add(dummyEntrypoint);
 		}
 
 		// For every entry point (or the dummy entry point which stands for all
@@ -1194,14 +1198,16 @@ public class SetupApplication {
 				throw new RuntimeException("Callgraph construction failed", e);
 			}
 	        
+	        final Set<SourceSinkDefinition> sources = getSources();
+	        final Set<SourceSinkDefinition> sinks = getSinks();
 	        if (config.getOneComponentAtATime())
 		        logger.info("Running data flow analysis on {} (component {}/{}: {}) with {} sources and {} sinks...",
 		        		apkFileLocation,
 		        		(entrypoints.size() - entrypointWorklist.size()), entrypoints.size(),
-		        		entrypoint, getSources().size(), getSinks().size());
+		        		entrypoint, sources == null ? 0 : sources.size(), sinks == null ? 0 : sinks.size());
 	        else
 		        logger.info("Running data flow analysis on {} with {} sources and {} sinks...",
-		        		apkFileLocation, getSources().size(), getSinks().size());
+		        		apkFileLocation, sources == null ? 0 : sources.size(), sinks == null ? 0 : sinks.size());
 	        
 			// Create a new entry point and compute the flows in it. If we
 	        // analyze all components together, we do not need a new callgraph,
