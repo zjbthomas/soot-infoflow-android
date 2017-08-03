@@ -403,7 +403,7 @@ public abstract class AbstractCallbackAnalyzer {
 					|| curClass.getName().equals("android.support.v7.app.AppCompatActivity"))
 				return true;
 			if (curClass.declaresMethod("void setContentView(int)"))
-				return true;
+				return false;
 			curClass = curClass.hasSuperclass() ? curClass.getSuperclass() : null;
 		}
 		return false;
