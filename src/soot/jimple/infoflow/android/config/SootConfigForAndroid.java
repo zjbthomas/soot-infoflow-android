@@ -22,7 +22,7 @@ public class SootConfigForAndroid implements IInfoflowConfig{
 	public void setSootOptions(Options options) {
 		// explicitly include packages for shorter runtime:
 		List<String> excludeList = new LinkedList<String>();
-		excludeList.add("java.*");
+		//excludeList.add("java.*");
 		excludeList.add("sun.*");
 		excludeList.add("android.*");
 		excludeList.add("org.apache.*");
@@ -32,6 +32,9 @@ public class SootConfigForAndroid implements IInfoflowConfig{
 		options.set_exclude(excludeList);
 		Options.v().set_no_bodies_for_excluded(true);
 		options.set_output_format(Options.output_format_none);
+		// Junbin [ADD]: let Soot process multiple dex files
+		options.v().set_process_multiple_dex(true);
+		Options.v().setPhaseOption("cg", "verbose:true");
 	}
 
 }

@@ -117,6 +117,9 @@ public class Test {
 						throw new RuntimeException(ex);
 					}
 				}
+				
+				// Junbin [ADD]: pass the results to ResultsHandler
+				ResultsHandler.handleResults(results);
 			}
 			
 		}
