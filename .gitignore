@@ -7,3 +7,4 @@ bin
 /insecureBank/InsecureBank
 /out.log
 /*.txt_backup
+*.dot

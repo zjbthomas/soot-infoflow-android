@@ -29,6 +29,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import heros.solver.Pair;
 import soot.G;
 import soot.Main;
+import soot.MethodOrMethodContext;
 import soot.PackManager;
 import soot.Scene;
 import soot.SootClass;
@@ -85,9 +86,14 @@ import soot.jimple.infoflow.source.data.ISourceSinkDefinitionProvider;
 import soot.jimple.infoflow.source.data.SourceSinkDefinition;
 import soot.jimple.infoflow.taintWrappers.ITaintPropagationWrapper;
 import soot.jimple.infoflow.util.SystemClassHandler;
+import soot.jimple.toolkits.callgraph.CallGraph;
+import soot.jimple.toolkits.callgraph.Edge;
 import soot.options.Options;
 import soot.util.HashMultiMap;
 import soot.util.MultiMap;
+import soot.util.cfgcmd.CFGToDotGraph;
+import soot.util.dot.DotGraph;
+import soot.util.queue.QueueReader;
 
 public class SetupApplication {
 
@@ -124,7 +130,7 @@ public class SetupApplication {
 	private Set<Stmt> collectedSources = null;
 	private Set<Stmt> collectedSinks = null;
 
-	private String callbackFile = "AndroidCallbacks.txt";
+	private String callbackFile = "../soot-infoflow-android/AndroidCallbacks.txt";
 	private SootClass scView = null;
 
 	private Set<PreAnalysisHandler> preprocessors = new HashSet<>();
@@ -1270,6 +1276,20 @@ public class SetupApplication {
 			this.fragmentClasses.clear();
 		}
 
+		// Junbin [ADD]
+		CallGraph cg = Scene.v().getCallGraph();
+		DotGraph canvas = new DotGraph("call-graph");
+		QueueReader<Edge> listener = cg.listener();
+		while (listener.hasNext()) {
+			Edge next = listener.next();
+			MethodOrMethodContext src = next.getSrc();
+			MethodOrMethodContext tgt = next.getTgt();
+			canvas.drawNode(src.toString());
+			canvas.drawNode(tgt.toString());
+			canvas.drawEdge(src.toString(), tgt.toString());
+		}
+		canvas.plot("../soot-infoflow-android/graph.dot");
+		
 		// We return the aggregated results
 		return resultAggregator.getResults();
 	}

@@ -179,3 +179,5 @@ android.widget.TabHost$OnTabChangeListener
 android.widget.TextView$OnEditorActionListener
 android.widget.TimePicker$OnTimeChangedListener
 android.widget.ZoomButtonsController$OnZoomListener 
+
+com.contextlogic.wish.activity.login.signin.SignInFragment$2

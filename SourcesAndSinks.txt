@@ -8,3 +8,7 @@
 <com.contextlogic.wish.util.ViewUtil: java.lang.String extractEditTextValue(android.widget.EditText)> -> _SINK_
 
 <org.edx.mobile.authentication.LoginAPI: retrofit2.Response getAccessToken(java.lang.String,java.lang.String)> -> _SINK_
+<org.edx.mobile.authentication.LoginAPI: org.edx.mobile.authentication.AuthResponse logInUsingEmail(java.lang.String,java.lang.String)> -> _SINK_
+
+<com.contextlogic.wish.api.service.standalone.EmailSignupService: void requestService(java.lang.String,java.lang.String,java.lang.String,java.lang.String,com.contextlogic.wish.api.service.standalone.LoginService$SuccessCallback,com.contextlogic.wish.api.service.ApiService$DefaultFailureCallback)> -> _SINK_
+<com.contextlogic.wish.util.ViewUtil: java.lang.String extractEditTextValue(android.widget.EditText)> -> _SOURCE_

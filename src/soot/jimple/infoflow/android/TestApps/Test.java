@@ -798,7 +798,7 @@ public class Test {
 			
 			System.out.println("Running data flow analysis...");
 			app.addResultsAvailableHandler(new MyResultsAvailableHandler());
-			final InfoflowResults res = app.runInfoflow("SourcesAndSinks.txt");
+			final InfoflowResults res = app.runInfoflow("../soot-infoflow-android/SourcesAndSinks.txt");
 			System.out.println("Analysis has run for " + (System.nanoTime() - beforeRun) / 1E9 + " seconds");
 			
 			if (config.getLogSourcesAndSinks()) {
