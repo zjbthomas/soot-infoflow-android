@@ -34,7 +34,7 @@ public class SootConfigForAndroid implements IInfoflowConfig{
 		options.set_output_format(Options.output_format_none);
 		// Junbin [ADD]: let Soot process multiple dex files
 		options.v().set_process_multiple_dex(true);
-		Options.v().setPhaseOption("cg", "verbose:true");
+		//Options.v().setPhaseOption("cg", "verbose:true");
 	}
 
 }
