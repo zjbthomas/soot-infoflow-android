@@ -1,8 +1,8 @@
-<android.app.Activity: android.view.View findViewById(int)> -> _SOURCE_
 <android.support.design.widget.TextInputEditText: android.text.Editable getText()> -> _SOURCE_
 <android.widget.EditText: android.text.Editable getText()> -> _SOURCE_
 
 <java.io.OutputStream: void write(byte[])> -> _SINK_
+<java.net.HttpURLConnection: void connect()> -> _SINK_
 
 <com.squareup.okhttp.OkHttpClient: com.squareup.okhttp.Call newCall(com.squareup.okhttp.Request)> -> _SINK_
 <com.contextlogic.wish.util.ViewUtil: java.lang.String extractEditTextValue(android.widget.EditText)> -> _SINK_
