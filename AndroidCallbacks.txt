@@ -181,3 +181,4 @@ android.widget.TimePicker$OnTimeChangedListener
 android.widget.ZoomButtonsController$OnZoomListener 
 
 com.contextlogic.wish.activity.login.signin.SignInFragment$2
+com.pnn.obdcardoctor_full.gui.dialog.ServiceActivity$13
