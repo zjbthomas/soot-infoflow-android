@@ -80,5 +80,9 @@ public class ResultsHandler {
 				}
 			}
 		}
+		
+		HashMap<Integer, String> passwordIds = null;
+		IInfoflowCFG cfg = null;
+		InfoflowResults results = null;
 	}
 }
