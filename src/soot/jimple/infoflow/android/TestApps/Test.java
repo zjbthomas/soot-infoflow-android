@@ -119,7 +119,7 @@ public class Test {
 				}
 				
 				// Junbin [ADD]: pass the results to ResultsHandler
-				ResultsHandler.handleResults(results);
+				ResultsHandler.feedResults(cfg, results);
 			}
 			
 		}
