@@ -21,7 +21,8 @@ public class ResultsHandler {
 	public static IInfoflowCFG cfg = null;
 	public static InfoflowResults results = null;
 	public final static String[] encryptionList = {
-			"doFinal"
+			"doFinal",
+			"digest"
 			};
 	
 	public static void feedPasswordIds(HashMap<Integer, String> passPasswordIds) {
