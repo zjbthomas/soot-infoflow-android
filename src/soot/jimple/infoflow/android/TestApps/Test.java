@@ -159,11 +159,18 @@ public class Test {
 		return Test.ipcManager;
 	}
 	
+	// Junbin [ADD]
+	public static void resetRepeatCount() {
+		repeatCount = 1;
+	}
+	
 	/**
 	 * @param args Program arguments. args[0] = path to apk-file,
 	 * args[1] = path to android-dir (path/android-platforms/)
 	 */
 	public static void main(final String[] args) throws IOException, InterruptedException {
+		
+		
 		if (args.length < 2) {
 			printUsage();	
 			return;
@@ -240,7 +247,7 @@ public class Test {
 			}
 			else
 				fullFilePath = fileName;
-
+			
 			// Run the analysis
 			while (repeatCount > 0) {
 				System.gc();
