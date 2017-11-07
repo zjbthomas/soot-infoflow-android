@@ -38,6 +38,10 @@ public class ResultsHandler {
 	public static int handleResults() {	
 		switch (SourcesSinksGenerator.getStage()) {
 		case FromSourcesToEncryptions:
+			// Initialize variables
+			fromSourcesToEncryptions = new ArrayList<Stmt[]>();
+			output = new ArrayList<String>();
+			
 			for (ResultSinkInfo sink : results.getResults().keySet()) {
 				for (ResultSourceInfo source : results.getResults().get(sink)) {
 					if (source.getPath() != null) {
@@ -65,7 +69,6 @@ public class ResultsHandler {
 						}
 						
 						// Add current path to fromSourcesToEncryptions
-						fromSourcesToEncryptions = new ArrayList<Stmt[]>();
 						fromSourcesToEncryptions.add(source.getPath());
 					}
 				}
@@ -103,7 +106,6 @@ public class ResultsHandler {
 									}
 								}
 								// Output
-								output = new ArrayList<String>();
 								output.add("[IMPORTANT] Encryption " + source.toString() + " found for " + passwordIds.get(detectedId));
 								output.add("[IMPORTANT] Source: " + stmts[0].toString() + " in " + firstCfg.getMethodOf(stmts[0]).getSignature());
 								output.add("[IMPORTANT] Sink: " + sink.toString());
@@ -173,7 +175,7 @@ public class ResultsHandler {
 						}
 						
 						// Add current path to fromSourcesToEncryptions
-						output.add("[IMPORTANT] No encryption found for" + passwordIds.get(detectedId));
+						output.add("[IMPORTANT] No encryption found for " + passwordIds.get(detectedId));
 						output.add("[IMPORTANT] Source: " + source.toString() + " in " + cfg.getMethodOf(source.getSource()).getSignature());
 						output.add("[IMPORTANT] Sink: " + sink.toString());
 						output.add("[IMPORTANT] Path:");
