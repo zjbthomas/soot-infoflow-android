@@ -38,6 +38,7 @@ import soot.Unit;
 import soot.jimple.Stmt;
 import soot.jimple.infoflow.AbstractInfoflow;
 import soot.jimple.infoflow.Infoflow;
+import soot.jimple.infoflow.InfoflowConfiguration;
 import soot.jimple.infoflow.android.callbacks.AbstractCallbackAnalyzer;
 import soot.jimple.infoflow.android.callbacks.CallbackDefinition;
 import soot.jimple.infoflow.android.callbacks.CallbackDefinition.CallbackType;
@@ -1300,6 +1301,8 @@ public class SetupApplication {
 	 * @return A properly configured instance of the {@link Infoflow} class
 	 */
 	private InPlaceInfoflow createInfoflow() {
+		// Junbin [ADD]
+		//InfoflowConfiguration.setPathAgnosticResults(false);
 		// Initialize and configure the data flow tracker
 		InPlaceInfoflow info = new InPlaceInfoflow(androidJar, forceAndroidJar, cfgFactory,
 				new DefaultPathBuilderFactory(config.getPathBuilder(), config.getComputeResultPaths()));
