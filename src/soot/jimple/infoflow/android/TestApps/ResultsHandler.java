@@ -104,7 +104,7 @@ public class ResultsHandler {
 								}
 								// Output
 								output = new ArrayList<String>();
-								output.add("[IMPORTANT] Encryption " + SourcesSinksGenerator.getMethodName(source.toString()) + " found for " + passwordIds.get(detectedId));
+								output.add("[IMPORTANT] Encryption " + source.toString() + " found for " + passwordIds.get(detectedId));
 								output.add("[IMPORTANT] Source: " + stmts[0].toString() + " in " + firstCfg.getMethodOf(stmts[0]).getSignature());
 								output.add("[IMPORTANT] Sink: " + sink.toString());
 								output.add("[IMPORTANT] Path:");
@@ -176,6 +176,7 @@ public class ResultsHandler {
 						output.add("[IMPORTANT] No encryption found for" + passwordIds.get(detectedId));
 						output.add("[IMPORTANT] Source: " + source.toString() + " in " + cfg.getMethodOf(source.getSource()).getSignature());
 						output.add("[IMPORTANT] Sink: " + sink.toString());
+						output.add("[IMPORTANT] Path:");
 						for (int i = 0; i < source.getPath().length; i++) {
 							output.add("[IMPORTANT] " + source.getPath()[i].toString());
 						}
