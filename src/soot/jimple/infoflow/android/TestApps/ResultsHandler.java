@@ -19,6 +19,7 @@ public class ResultsHandler {
 	
 	public static HashMap<Integer, String> passwordIds = null;
 	public static ArrayList<Stmt[]> fromSourcesToEncryptions = null;
+	public static ArrayList<String[]> encryptedPaths = null;
 	
 	public static ArrayList<String> output = null;
 	
@@ -40,6 +41,7 @@ public class ResultsHandler {
 		case FromSourcesToEncryptions:
 			// Initialize variables
 			fromSourcesToEncryptions = new ArrayList<Stmt[]>();
+			encryptedPaths = new ArrayList<String[]>();
 			output = new ArrayList<String>();
 			
 			for (ResultSinkInfo sink : results.getResults().keySet()) {
@@ -57,16 +59,19 @@ public class ResultsHandler {
 						}
 						
 						// The current source should contains one password ID
-						boolean foundId = false;
-						for (int id : passwordIds.keySet()) {
-							if (source.toString().contains(String.valueOf(id))) {
-								foundId = true;
-								break;
+						if (source.toString().contains("findViewById")) {
+							boolean foundId = false;
+							for (int id : passwordIds.keySet()) {
+								if (source.toString().contains(String.valueOf(id))) {
+									foundId = true;
+									break;
+								}
+							}
+							if (!foundId) {
+								continue;
 							}
 						}
-						if (!foundId) {
-							continue;
-						}
+						
 						
 						// Add current path to fromSourcesToEncryptions
 						fromSourcesToEncryptions.add(source.getPath());
@@ -97,16 +102,24 @@ public class ResultsHandler {
 						for (Stmt[] stmts : fromSourcesToEncryptions) {
 							// Check if current source equals sink of last taint analysis
 							if (source.toString().contains(stmts[stmts.length - 1].toString())) {
+								// Add it to encryptedPaths
+								encryptedPaths.add(new String[] {stmts[0].toString(), sink.toString()});
 								// Detect ID
-								int detectedId = 0;
+								int detectedId = -1;
+								boolean foundId = false;
 								for (int id : passwordIds.keySet()) {
 									if (stmts[0].toString().contains(String.valueOf(id))) {
 										detectedId = id;
+										foundId = true;
 										break;
 									}
 								}
 								// Output
-								output.add("[IMPORTANT] Encryption " + source.toString() + " found for " + passwordIds.get(detectedId));
+								if (foundId) {
+									output.add("[IMPORTANT] Encryption " + source.toString() + " found for " + passwordIds.get(detectedId));
+								} else {
+									output.add("[IMPORTANT] Encryption " + source.toString() + " found");
+								}
 								output.add("[IMPORTANT] Source: " + stmts[0].toString() + " in " + firstCfg.getMethodOf(stmts[0]).getSignature());
 								output.add("[IMPORTANT] Sink: " + sink.toString());
 								output.add("[IMPORTANT] Path:");
@@ -144,18 +157,21 @@ public class ResultsHandler {
 						}
 						
 						// The current source should contains one password ID
-						int detectedId = 0;
+						int detectedId = -1;
 						boolean foundId = false;
-						for (int id : passwordIds.keySet()) {
-							if (source.toString().contains(String.valueOf(id))) {
-								detectedId = id;
-								foundId = true;
-								break;
+						if (source.toString().contains("findViewById")) {
+							for (int id : passwordIds.keySet()) {
+								if (source.toString().contains(String.valueOf(id))) {
+									detectedId = id;
+									foundId = true;
+									break;
+								}
+							}
+							if (!foundId) {
+								continue;
 							}
 						}
-						if (!foundId) {
-							continue;
-						}
+						
 						
 						// Check path if it does not contain any encryption
 						boolean foundEncryption = false;
@@ -174,8 +190,24 @@ public class ResultsHandler {
 							continue;
 						}
 						
+						// Filter out results that have same source and sink as already detected
+						boolean foundPath = false;
+						for (String[] sourceSink : encryptedPaths) {
+							if (source.toString().equals(sourceSink[0]) && sink.toString().equals(sourceSink[1])) {
+								foundPath = true;
+								break;
+							}
+						}
+						if (foundPath) {
+							continue;
+						}
+						
 						// Add current path to fromSourcesToEncryptions
-						output.add("[IMPORTANT] No encryption found for " + passwordIds.get(detectedId));
+						if (foundId) {
+							output.add("[IMPORTANT] No encryption found for " + passwordIds.get(detectedId));
+						} else {
+							output.add("[IMPORTANT] No encryption found");
+						}
 						output.add("[IMPORTANT] Source: " + source.toString() + " in " + cfg.getMethodOf(source.getSource()).getSignature());
 						output.add("[IMPORTANT] Sink: " + sink.toString());
 						output.add("[IMPORTANT] Path:");
@@ -197,6 +229,7 @@ public class ResultsHandler {
 			firstCfg = null;
 			passwordIds = null;
 			fromSourcesToEncryptions = null;
+			encryptedPaths = null;
 			output = null;
 			
 			return 0;

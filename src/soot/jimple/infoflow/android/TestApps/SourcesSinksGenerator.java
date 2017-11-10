@@ -13,17 +13,22 @@ public class SourcesSinksGenerator {
 	public static Stage currentStage;
 	
 	public final static String[] sources = {
-			"<android.app.Activity: android.view.View findViewById(int)>",
-			"<android.support.v7.app.AppCompatActivity: android.view.View findViewById(int)>"
+			//"<android.app.Activity: android.view.View findViewById(int)>",
+			//"<android.support.v7.app.AppCompatActivity: android.view.View findViewById(int)>"
+			"<android.support.design.widget.TextInputEditText: android.text.Editable getText()>",
+			"<android.widget.EditText: android.text.Editable getText()>"
+
 	};
 	public final static String[] encryptions = {
-			"<java.security.MessageDigest: byte[] digest()>"
+			"<java.security.MessageDigest: byte[] digest()>",
+			"<javax.crypto.Cipher: byte[] doFinal()>"
 	};
 	public final static String[] sinks = {
 			"<java.net.HttpURLConnection: void connect()>",
 			"<com.android.volley.RequestQueue: com.android.volley.Request add(com.android.volley.Request)>",
 			"<java.io.OutputStream: void flush()>",
-			"<com.squareup.okhttp.Call: com.squareup.okhttp.Response execute()>"
+			"<com.squareup.okhttp.Call: com.squareup.okhttp.Response execute()>",
+			"<java.io.BufferedOutputStream: void flush()>"
 	};
 	
 	private final static String sourceAndSinks = "../soot-infoflow-android/SourcesAndSinks.txt";
