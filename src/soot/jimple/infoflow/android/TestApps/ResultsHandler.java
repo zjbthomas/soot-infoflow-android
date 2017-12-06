@@ -36,20 +36,15 @@ public class ResultsHandler {
 		results = passResults;
 	}
 	
-	public static int handleResults() {	
+	public static int handleResults(boolean direct) {	
 		switch (SourcesSinksGenerator.getStage()) {
-		case FromSourcesToEncryptions:
-			// Initialize variables
-			fromSourcesToEncryptions = new ArrayList<Stmt[]>();
-			encryptedPaths = new ArrayList<String[]>();
-			output = new ArrayList<String>();
-			
+		case FromSourcesToConversions:
 			for (ResultSinkInfo sink : results.getResults().keySet()) {
 				for (ResultSourceInfo source : results.getResults().get(sink)) {
 					if (source.getPath() != null) {
 						// The current source should from source list
 						boolean foundSource = false;
-						for (String s : SourcesSinksGenerator.getSources()) {
+						for (String s : SourcesSinksGenerator.getSources(direct)) {
 							if (source.toString().contains(SourcesSinksGenerator.getMethodName(s))) {
 								foundSource = true;
 							}
@@ -83,13 +78,13 @@ public class ResultsHandler {
 			results = null;
 			
 			return fromSourcesToEncryptions.size();
-		case FromEncryptionsToSinks:
+		case FromConversionsToSinks:
 			for (ResultSinkInfo sink : results.getResults().keySet()) {
 				for (ResultSourceInfo source : results.getResults().get(sink)) {
 					if (source.getPath() != null) {
 						// The current source should from encryption list
 						boolean foundSource = false;
-						for (String s : SourcesSinksGenerator.getSources()) {
+						for (String s : SourcesSinksGenerator.getSources(direct)) {
 							if (source.toString().contains(SourcesSinksGenerator.getMethodName(s))) {
 								foundSource = true;
 							}
@@ -147,7 +142,7 @@ public class ResultsHandler {
 					if (source.getPath() != null) {
 						// The current source should from source list
 						boolean foundSource = false;
-						for (String s : SourcesSinksGenerator.getSources()) {
+						for (String s : SourcesSinksGenerator.getSources(direct)) {
 							if (source.toString().contains(SourcesSinksGenerator.getMethodName(s))) {
 								foundSource = true;
 							}
@@ -218,23 +213,42 @@ public class ResultsHandler {
 					}
 				}
 			}
-			// Output
-			for (String s : output) {
-				System.out.println(s);
-			}
 			
-			// Reset all parameters
-			cfg = null;
-			results = null;
-			firstCfg = null;
-			passwordIds = null;
-			fromSourcesToEncryptions = null;
-			encryptedPaths = null;
-			output = null;
+			// Reset
+			clear();
 			
 			return 0;
 		}
 		
 		return 0;
+	}
+	
+	public static void printResults() {
+		for (String s : output) {
+			System.out.println(s);
+		}
+		// Reset
+		output = null;
+	}
+	
+	public static void initialize() {
+		// Reset all parameters
+		cfg = null;
+		results = null;
+		firstCfg = null;
+		// Initialize variables
+		fromSourcesToEncryptions = new ArrayList<Stmt[]>();
+		encryptedPaths = new ArrayList<String[]>();
+		output = new ArrayList<String>();
+	}
+	
+	public static void clear() {
+		// Reset all parameters
+		cfg = null;
+		results = null;
+		firstCfg = null;
+		// Initialize variables
+		fromSourcesToEncryptions = new ArrayList<Stmt[]>();
+		encryptedPaths = new ArrayList<String[]>();
 	}
 }
