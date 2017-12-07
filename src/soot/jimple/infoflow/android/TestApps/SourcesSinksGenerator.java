@@ -23,6 +23,7 @@ public class SourcesSinksGenerator {
 	
 	public final static String[] indirectSources = {
 			"<android.app.Activity: android.view.View findViewById(int)>",
+			"<android.support.v4.app.FragmentActivity: android.view.View findViewById(int)>",
 			"<android.support.v7.app.AppCompatActivity: android.view.View findViewById(int)>",
 
 	};
