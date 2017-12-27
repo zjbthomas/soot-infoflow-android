@@ -17,15 +17,19 @@ public class SourcesSinksGenerator {
 	public final static String[] directSources = {
 			"<android.support.design.widget.TextInputEditText: android.text.Editable getText()>",
 			"<android.widget.EditText: android.text.Editable getText()>",
-			"<android.widget.TextView: java.lang.CharSequence getText()>"
-
+			"<android.widget.TextView: java.lang.CharSequence getText()>",
+			"<android.app.Activity: android.view.View findViewById(int)>",
+			"<android.support.v4.app.FragmentActivity: android.view.View findViewById(int)>",
+			"<android.support.v7.app.AppCompatActivity: android.view.View findViewById(int)>"
 	};
 	
 	public final static String[] indirectSources = {
 			"<android.app.Activity: android.view.View findViewById(int)>",
 			"<android.support.v4.app.FragmentActivity: android.view.View findViewById(int)>",
 			"<android.support.v7.app.AppCompatActivity: android.view.View findViewById(int)>",
-
+			"<android.support.design.widget.TextInputEditText: android.text.Editable getText()>",
+			"<android.widget.EditText: android.text.Editable getText()>",
+			"<android.widget.TextView: java.lang.CharSequence getText()>"
 	};
 	
 	public final static String[] conversions = {
@@ -48,7 +52,18 @@ public class SourcesSinksGenerator {
 			"<java.io.BufferedOutputStream: void flush()>",
 			"<java.io.OutputStreamWriter: void flush()>",
 			"<com.squareup.okhttp.Call: com.squareup.okhttp.Response execute()>",
-			"<retrofit2.Call: void enqueue(retrofit2.Callback)>"
+			"<retrofit2.Call: void enqueue(retrofit2.Callback)>",
+			"<java.net.URL: java.net.URLConnection openConnection()>",
+			"<java.net.URLConnection: void connect()>",
+			"<org.apache.http.client: org.apache.http.HttpResponse execute(org.apache.http.HttpHost, org.apache.http.HttpRequest)>",
+			"<org.apache.http.client: org.apache.http.HttpResponse execute(org.apache.http.HttpHost, org.apache.http.protocol.HttpContext)>",
+			"<org.apache.http.client: java.lang.Object execute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.client.ResponseHandler)>",
+			"<org.apache.http.client: java.lang.Object execute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.client.ResponseHandler, org.apache.http.protocol.HttpContext)>",
+			"<org.apache.http.client: org.apache.http.HttpResponse execute(org.apache.http.HttpRequest)>",
+			"<org.apache.http.client: org.apache.http.HttpResponse execute(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext)>",
+			"<org.apache.http.client: java.lang.Object execute(org.apache.http.HttpRequest, org.apache.http.client.ResponseHandler)>",
+			"<org.apache.http.client: java.lang.Object execute(org.apache.http.HttpRequest, org.apache.http.client.ResponseHandler, org.apache.http.protocol.HttpContext)>",
+			"<java.net.Socket: java.io.OutputStream getOutputStream()>"
 	};
 	
 	private final static String sourceAndSinks = "../soot-infoflow-android/SourcesAndSinks.txt";
